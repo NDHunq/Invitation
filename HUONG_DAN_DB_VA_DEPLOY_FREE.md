@@ -75,6 +75,29 @@ Goi y bao mat:
 - Neu sau nay muon admin-only xem du lieu day du, hay tach policy theo role.
 - Co the them captcha/rate-limit de tranh spam.
 
+Neu muon sua/xoa phan hoi ngay tren trang admin (client side), can them policy sau:
+
+```sql
+drop policy if exists "Allow public update rsvps" on public.rsvps;
+create policy "Allow public update rsvps"
+on public.rsvps
+for update
+to anon
+using (true)
+with check (true);
+
+drop policy if exists "Allow public delete rsvps" on public.rsvps;
+create policy "Allow public delete rsvps"
+on public.rsvps
+for delete
+to anon
+using (true);
+```
+
+Canh bao:
+- Cach tren dung cho demo/noi bo nhanh.
+- Neu app public, nen doi sang backend co xac thuc admin (khong nen mo update/delete cho role anon).
+
 ### 2.4 Bat Realtime cho bang `rsvps`
 
 Muc tieu cua buoc nay: dua bang `public.rsvps` vao publication `supabase_realtime`.

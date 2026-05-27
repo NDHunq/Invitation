@@ -31,6 +31,12 @@ export default function AdminPage() {
   const [error, setError] = useState("");
   const [records, setRecords] = useState<RSVPRecord[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<RSVPRecord | null>(null);
+  const [editingRecord, setEditingRecord] = useState<RSVPRecord | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editAttending, setEditAttending] = useState(true);
+  const [editMessage, setEditMessage] = useState("");
+  const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
 
   /** Kiểm tra mật khẩu */
   const handleLogin = (e: React.FormEvent) => {
@@ -46,20 +52,88 @@ export default function AdminPage() {
   /** Lấy danh sách RSVP từ Supabase */
   const fetchRecords = useCallback(async () => {
     setLoading(true);
+    setError("");
     try {
       const { data, error } = await supabase
-        .from("rsvp")
+        .from("rsvps")
         .select("*")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
       setRecords(data || []);
-    } catch {
-      console.error("Lỗi khi tải dữ liệu RSVP");
+    } catch (error) {
+      console.error("Lỗi khi tải dữ liệu RSVP", error);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      setError(`Không tải được dữ liệu RSVP: ${message}`);
     } finally {
       setLoading(false);
     }
   }, []);
+
+  const openEditModal = (record: RSVPRecord) => {
+    setEditingRecord(record);
+    setEditName(record.name);
+    setEditAttending(record.attending);
+    setEditMessage(record.message ?? "");
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingRecord) return;
+    if (!editName.trim()) {
+      setError("Tên khách mời không được để trống.");
+      return;
+    }
+
+    setError("");
+    setActionLoadingId(editingRecord.id);
+
+    try {
+      const payload = {
+        name: editName.trim(),
+        attending: editAttending,
+        message: editMessage.trim() || null,
+      };
+
+      const { data, error } = await supabase
+        .from("rsvps")
+        .update(payload)
+        .eq("id", editingRecord.id)
+        .select("*")
+        .single();
+
+      if (error) throw error;
+
+      setRecords((current) =>
+        current.map((record) => (record.id === editingRecord.id ? (data as RSVPRecord) : record))
+      );
+      setEditingRecord(null);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      setError(`Không sửa được phản hồi: ${message}`);
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  const handleDelete = async (record: RSVPRecord) => {
+    if (!window.confirm(`Xóa phản hồi của ${record.name}?`)) return;
+
+    setError("");
+    setActionLoadingId(record.id);
+
+    try {
+      const { error } = await supabase.from("rsvps").delete().eq("id", record.id);
+      if (error) throw error;
+
+      setRecords((current) => current.filter((item) => item.id !== record.id));
+      if (selectedRecord?.id === record.id) setSelectedRecord(null);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      setError(`Không xóa được phản hồi: ${message}`);
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
 
   useEffect(() => {
     if (authenticated) fetchRecords();
@@ -201,6 +275,12 @@ export default function AdminPage() {
           </motion.button>
         </div>
 
+        {!!error && (
+          <div className="mb-4 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            {error}
+          </div>
+        )}
+
         {/* Bảng dữ liệu */}
         <motion.div
           className="glass-card overflow-hidden"
@@ -231,6 +311,7 @@ export default function AdminPage() {
                     <th>Trạng thái</th>
                     <th>Lời chúc</th>
                     <th>Thời gian</th>
+                    <th>Hành động</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -275,6 +356,30 @@ export default function AdminPage() {
                           minute: "2-digit",
                         })}
                       </td>
+                      <td>
+                        <div className="flex items-center gap-2">
+                          <button
+                            className="btn-outline !px-3 !py-1.5 text-xs"
+                            onClick={() => setSelectedRecord(record)}
+                          >
+                            Xem
+                          </button>
+                          <button
+                            className="btn-outline !px-3 !py-1.5 text-xs"
+                            onClick={() => openEditModal(record)}
+                            disabled={actionLoadingId === record.id}
+                          >
+                            Sửa
+                          </button>
+                          <button
+                            className="btn-outline !px-3 !py-1.5 text-xs !border-red-400/40 !text-red-300 hover:!border-red-300"
+                            onClick={() => handleDelete(record)}
+                            disabled={actionLoadingId === record.id}
+                          >
+                            {actionLoadingId === record.id ? "..." : "Xóa"}
+                          </button>
+                        </div>
+                      </td>
                     </motion.tr>
                   ))}
                 </tbody>
@@ -282,6 +387,118 @@ export default function AdminPage() {
             </div>
           )}
         </motion.div>
+
+        <AnimatePresence>
+          {selectedRecord && (
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedRecord(null)}
+            >
+              <motion.div
+                className="glass-card w-full max-w-lg p-6"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 20, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "var(--font-serif)" }}>
+                  Chi tiết lời chúc
+                </h3>
+                <p className="text-sm text-[var(--text-muted)] mb-1">Khách mời</p>
+                <p className="mb-3 text-[var(--text-primary)]">{selectedRecord.name}</p>
+                <p className="text-sm text-[var(--text-muted)] mb-1">Trạng thái</p>
+                <p className="mb-3 text-[var(--text-primary)]">
+                  {selectedRecord.attending ? "Tham gia" : "Không tham gia"}
+                </p>
+                <p className="text-sm text-[var(--text-muted)] mb-1">Thời gian</p>
+                <p className="mb-3 text-[var(--text-primary)]">
+                  {new Date(selectedRecord.created_at).toLocaleString("vi-VN")}
+                </p>
+                <p className="text-sm text-[var(--text-muted)] mb-1">Lời chúc</p>
+                <p className="text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed">
+                  {selectedRecord.message || "Không có"}
+                </p>
+                <div className="flex justify-end mt-6">
+                  <button className="btn-outline" onClick={() => setSelectedRecord(null)}>
+                    Đóng
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {editingRecord && (
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setEditingRecord(null)}
+            >
+              <motion.div
+                className="glass-card w-full max-w-lg p-6"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 20, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h3 className="text-xl font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
+                  Sửa phản hồi
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm text-[var(--text-muted)] mb-1">Họ tên</label>
+                    <input
+                      className="input-elegant"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      maxLength={100}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-[var(--text-muted)] mb-1">Trạng thái</label>
+                    <select
+                      className="input-elegant"
+                      value={editAttending ? "yes" : "no"}
+                      onChange={(e) => setEditAttending(e.target.value === "yes")}
+                    >
+                      <option value="yes">Tham gia</option>
+                      <option value="no">Không tham gia</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-[var(--text-muted)] mb-1">Lời chúc</label>
+                    <textarea
+                      className="input-elegant resize-none"
+                      rows={5}
+                      value={editMessage}
+                      onChange={(e) => setEditMessage(e.target.value)}
+                      maxLength={500}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-3 mt-6">
+                  <button className="btn-outline" onClick={() => setEditingRecord(null)}>
+                    Hủy
+                  </button>
+                  <button
+                    className="btn-primary"
+                    onClick={handleSaveEdit}
+                    disabled={actionLoadingId === editingRecord.id}
+                  >
+                    {actionLoadingId === editingRecord.id ? "Đang lưu..." : "Lưu thay đổi"}
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
