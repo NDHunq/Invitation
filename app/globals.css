@@ -1,26 +1,608 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
+/* ============================================
+   DESIGN TOKENS - Bảng màu chủ đạo xanh dương sang trọng
+   ============================================ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Màu nền chính - tông tối sang trọng */
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #0f1629;
+  --bg-card: rgba(15, 23, 55, 0.6);
+  --bg-card-hover: rgba(20, 30, 70, 0.7);
+
+  /* Màu xanh dương chủ đạo - gradient */
+  --blue-50: #eef4ff;
+  --blue-100: #d9e7ff;
+  --blue-200: #b3cfff;
+  --blue-300: #7dabff;
+  --blue-400: #4a8aff;
+  --blue-500: #2563eb;
+  --blue-600: #1d4ed8;
+  --blue-700: #1e40af;
+  --blue-800: #1e3a8a;
+  --blue-900: #172554;
+
+  /* Vàng gold accent */
+  --gold-300: #fcd34d;
+  --gold-400: #fbbf24;
+  --gold-500: #f59e0b;
+
+  /* Text */
+  --text-primary: #f0f4ff;
+  --text-secondary: #94a3d0;
+  --text-muted: #6b7db8;
+
+  /* Border */
+  --border-subtle: rgba(99, 130, 208, 0.15);
+  --border-active: rgba(37, 99, 235, 0.5);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-card: var(--bg-card);
+  --color-blue-400: var(--blue-400);
+  --color-blue-500: var(--blue-500);
+  --color-blue-600: var(--blue-600);
+  --color-blue-700: var(--blue-700);
+  --color-gold-400: var(--gold-400);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-active: var(--border-active);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: "Inter", system-ui, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ============================================
+   SCROLLBAR - Thanh cuộn tối giản
+   ============================================ */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--blue-700);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--blue-500);
+}
+
+/* ============================================
+   AURORA GRADIENT BACKGROUND
+   -------------------------------------------
+   Dải sáng cực quang mờ ảo + radial glow
+   tạo chiều sâu cho không gian nền.
+   ============================================ */
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.aurora-bg::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    radial-gradient(ellipse 600px 400px at 20% 20%, rgba(37, 99, 235, 0.08), transparent 70%),
+    radial-gradient(ellipse 500px 500px at 80% 30%, rgba(139, 92, 246, 0.06), transparent 70%),
+    radial-gradient(ellipse 400px 300px at 60% 80%, rgba(6, 182, 212, 0.05), transparent 70%);
+  animation: aurora-drift 25s ease-in-out infinite alternate;
+}
+
+.aurora-bg::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    radial-gradient(ellipse 500px 350px at 70% 60%, rgba(37, 99, 235, 0.06), transparent 70%),
+    radial-gradient(ellipse 600px 400px at 30% 70%, rgba(168, 85, 247, 0.05), transparent 70%);
+  animation: aurora-drift 30s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(2%, -1%) rotate(1deg);
+  }
+  66% {
+    transform: translate(-1%, 2%) rotate(-1deg);
+  }
+  100% {
+    transform: translate(1%, -2%) rotate(0.5deg);
+  }
+}
+
+/* ============================================
+   PARTICLE CANVAS - Background animation
+   ============================================ */
+.particle-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ============================================
+   FIREWORKS ANIMATION
+   ============================================ */
+@keyframes firework-rise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes firework-burst {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-10vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   GLOW EFFECTS
+   ============================================ */
+.glow-blue {
+  box-shadow:
+    0 0 15px rgba(37, 99, 235, 0.2),
+    0 0 40px rgba(37, 99, 235, 0.08),
+    inset 0 0 15px rgba(37, 99, 235, 0.03);
+}
+
+.glow-text {
+  text-shadow:
+    0 0 20px rgba(37, 99, 235, 0.4),
+    0 0 40px rgba(37, 99, 235, 0.2),
+    0 0 80px rgba(37, 99, 235, 0.1);
+}
+
+/* ============================================
+   GLASSMORPHISM CARD — Premium Edition
+   -------------------------------------------
+   bg bán trong suốt + backdrop-blur +
+   viền gradient bắt sáng + shadow mềm
+   ============================================ */
+.glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(37, 99, 235, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* ============================================
+   GRADIENT TEXT — Gold-to-Silver Premium
+   ============================================ */
+.gradient-text {
+  background: linear-gradient(135deg, #fde68a, #fbbf24, #f0f4ff, #fbbf24, #fde68a);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shimmer 6s ease-in-out infinite;
+}
+
+@keyframes gradient-shimmer {
+  0%, 100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+
+/* Gradient text variant — blue cyan */
+.gradient-text-blue {
+  background: linear-gradient(135deg, #7dd3fc, #38bdf8, #818cf8, #38bdf8, #7dd3fc);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shimmer 6s ease-in-out infinite;
+  text-shadow: none;
+}
+
+/* ============================================
+   AVATAR GLOW RING
+   -------------------------------------------
+   Vòng sáng conic-gradient xoay chậm
+   + hiệu ứng nhịp thở (pulse)
+   ============================================ */
+.avatar-ring {
+  position: relative;
+  border-radius: 9999px;
+  padding: 3px;
+  background: conic-gradient(
+    from 0deg,
+    var(--gold-300),
+    var(--blue-400),
+    var(--gold-400),
+    var(--blue-300),
+    var(--gold-300)
+  );
+  animation: spin-glow 8s linear infinite, pulse-glow 3s ease-in-out infinite;
+}
+
+.avatar-ring::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  background: conic-gradient(
+    from 180deg,
+    transparent,
+    rgba(251, 191, 36, 0.3),
+    transparent,
+    rgba(37, 99, 235, 0.3),
+    transparent
+  );
+  animation: spin-glow 8s linear infinite reverse;
+  filter: blur(8px);
+  z-index: -1;
+}
+
+@keyframes spin-glow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2), 0 0 40px rgba(37, 99, 235, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(251, 191, 36, 0.35), 0 0 60px rgba(37, 99, 235, 0.2);
+  }
+}
+
+/* ============================================
+   DIVIDER ORNAMENT
+   ============================================ */
+.ornament-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  opacity: 0.5;
+}
+.ornament-divider::before,
+.ornament-divider::after {
+  content: "";
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--blue-400), transparent);
+}
+
+/* ============================================
+   WISHES WALL MARQUEE
+   ============================================ */
+.marquee-row {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  width: max-content;
+  animation: marquee-left 30s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track-reverse {
+  animation-name: marquee-right;
+  animation-duration: 34s;
+}
+
+.marquee-row:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ============================================
+   INPUT & TEXTAREA — Premium Focus Glow
+   ============================================ */
+.input-elegant {
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  transition: all 0.4s ease;
+  outline: none;
+}
+.input-elegant::placeholder {
+  color: var(--text-muted);
+}
+.input-elegant:focus {
+  border-color: rgba(251, 191, 36, 0.4);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 0 0 3px rgba(251, 191, 36, 0.08),
+    0 0 20px rgba(251, 191, 36, 0.06);
+}
+
+/* ============================================
+   BUTTON STYLES — Premium Edition
+   ============================================ */
+.btn-primary {
+  padding: 14px 28px;
+  background: linear-gradient(135deg, var(--blue-600), var(--blue-500), var(--blue-400));
+  background-size: 200% auto;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+}
+.btn-primary:hover {
+  background-position: right center;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 8px 25px rgba(37, 99, 235, 0.5),
+    0 0 40px rgba(37, 99, 235, 0.2);
+}
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Shimmer sweep effect on button */
+.btn-primary::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  animation: btn-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes btn-shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.btn-outline {
+  padding: 14px 28px;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+.btn-outline:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+}
+.btn-outline:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ============================================
+   TOAST NOTIFICATION
+   ============================================ */
+.toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  padding: 16px 28px;
+  border-radius: 14px;
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  max-width: 90vw;
+  text-align: center;
+}
+.toast-success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+}
+.toast-info {
+  background: rgba(37, 99, 235, 0.15);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  color: var(--blue-300);
+}
+
+/* ============================================
+   ADMIN TABLE
+   ============================================ */
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.admin-table th {
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  background: rgba(15, 22, 41, 0.8);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.admin-table th:first-child {
+  border-radius: 12px 0 0 0;
+}
+.admin-table th:last-child {
+  border-radius: 0 12px 0 0;
+}
+.admin-table td {
+  padding: 14px 18px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(99, 130, 208, 0.07);
+}
+.admin-table tr:hover td {
+  background: rgba(37, 99, 235, 0.04);
+}
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.status-attending {
+  background: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+}
+.status-declined {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
 }
