@@ -197,7 +197,7 @@ function InvitationContent() {
                 </h3>
               </div>
               <p className="text-2xl md:text-3xl font-bold gradient-text mb-2">
-                8:00 SA
+                10:30 SA
               </p>
               <p className="text-base md:text-lg text-[var(--text-secondary)]">
                 Thứ Tư, ngày 10 tháng 06 năm 2026

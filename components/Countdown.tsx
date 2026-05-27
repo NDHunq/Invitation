@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
    ============================================ */
 
 // ⚠️ Ngày Lễ Tốt Nghiệp - Thay đổi tại đây nếu cần
-const TARGET_DATE = new Date("2026-06-10T08:00:00+07:00");
+const TARGET_DATE = new Date("2026-06-10T10:30:00+07:00");
 
 interface TimeLeft {
   days: number;

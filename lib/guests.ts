@@ -7,12 +7,22 @@
    ============================================ */
 
 export const GUEST_MAP: Record<string, string> = {
-  tung: "Anh Tùng",
-  duy: "Anh Duy",
-  phuong: "Chị Phương",
-  truong: "Anh Trường",
-  son: "Anh Sơn",
-  hien: "Chị Hiền",
+  quang: "Bạn Quang",
+  bao: "Bạn Bảo",
+  tan: "Bạn Tân",
+  tran: "Bạn Trân",
+  tien: "Bạn Tiên",
+  thu: "Bạn Thư",
+  "ban-hien": "Bạn Hiển",
+  phuc: "Bạn Phúc",
+  huy: "Bạn Huy",
+  "dai-gia-dinh": "Đại gia đình",
+  "chi-hai-uyen-va-be-tue": "Chị Hai Uyên và bé Tuệ",
+  "anh-tan": "Anh Tân",
+  "anh-man": "Anh Mẫn",
+  "chi-thanh": "Chị Thanh",
+  "anh-son": "Anh Sơn",
+  "chi-phuong-va-anh-nhut": "Chị Phương và anh Nhựt",
   // ➕ Thêm khách mời mới theo format: key: "Tên hiển thị"
 };
 
