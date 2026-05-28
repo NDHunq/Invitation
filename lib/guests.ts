@@ -24,6 +24,10 @@ export const GUEST_MAP: Record<string, string> = {
   "anh-son": "Anh Sơn",
   "chi-phuong-va-anh-nhut": "Chị Phương và anh Nhựt",
   // ➕ Thêm khách mời mới theo format: key: "Tên hiển thị"
+  "anh-duy": "Anh Duy",
+  "anh-hoang": "Anh Hoàng",
+  "anh-nhat": "Anh Nhất",
+  "chi-phien": "Chị Phiến",
 };
 
 /** Tên mặc định khi không có query hoặc không khớp */
