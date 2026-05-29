@@ -69,7 +69,8 @@ export function getMockWishes(): WishItem[] {
 }
 
 export function normalizeWishes(items: WishItem[]): WishItem[] {
+  // Keep all items (including those without a message) but sort by newest first.
   return items
-    .filter((item) => item.message?.trim())
+    .slice()
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 }

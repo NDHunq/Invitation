@@ -24,8 +24,6 @@ async function fetchWishes(): Promise<WishItem[]> {
   const { data, error } = await supabase
     .from("rsvps")
     .select("id, name, message, created_at")
-    .not("message", "is", null)
-    .neq("message", "")
     .order("created_at", { ascending: false });
 
   if (error || !data) {

@@ -92,8 +92,6 @@ export default function WishesWall() {
       const { data, error } = await supabase
         .from("rsvps")
         .select("id, name, message, created_at")
-        .not("message", "is", null)
-        .neq("message", "")
         .order("created_at", { ascending: false })
         .limit(40);
 
@@ -121,7 +119,6 @@ export default function WishesWall() {
         { event: "INSERT", schema: "public", table: "rsvps" },
         (payload) => {
           const newWish = payload.new as WishItem;
-          if (!newWish?.message?.trim()) return;
 
           setWishes((current) => {
             const withoutDuplicate = current.filter((item) => item.id !== newWish.id);
