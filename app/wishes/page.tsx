@@ -1,4 +1,5 @@
 import Link from "next/link";
+export const dynamic = "force-dynamic";
 import { createClient } from "@supabase/supabase-js";
 import ParticleBackground from "@/components/ParticleBackground";
 import WishesMasonry from "@/components/wishes/WishesMasonry";
