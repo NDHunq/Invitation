@@ -197,7 +197,7 @@ function InvitationContent() {
                 </h3>
               </div>
               <p className="text-2xl md:text-3xl font-bold gradient-text mb-2">
-                10:30 SA
+                10:00 SA
               </p>
               <p className="text-base md:text-lg text-[var(--text-secondary)]">
                 Thứ Tư, ngày 10 tháng 06 năm 2026
@@ -284,16 +284,16 @@ function InvitationContent() {
                 Hành trình 4 năm tại UIT chuẩn bị khép lại.
               </p>
               <p className="mb-5">
-                Từ những ngày đầu bỡ ngỡ bước vào giảng đường, những đêm thức trắng 
-                cùng deadline, những buổi thuyết trình run run trước lớp, đến những 
-                dự án đầu tay đầy tự hào — tất cả không chỉ là những con số hay dòng 
+                Từ những ngày đầu bỡ ngỡ bước vào giảng đường, những đêm thức trắng
+                cùng deadline, những buổi thuyết trình run run trước lớp, đến những
+                dự án đầu tay đầy tự hào — tất cả không chỉ là những con số hay dòng
                 code, mà là{" "}
                 <span className="text-[var(--text-primary)] font-medium italic">
                   thanh xuân, mồ hôi và những nụ cười.
                 </span>
               </p>
               <p className="mb-5">
-                Để đi đến được cột mốc hôm nay, Hưng vô cùng biết ơn sự đồng hành, 
+                Để đi đến được cột mốc hôm nay, Hưng vô cùng biết ơn sự đồng hành,
                 dìu dắt từ những người anh, người chị, người bạn trân quý nhất.
               </p>
               <p className="text-base md:text-lg text-[var(--text-primary)]">
