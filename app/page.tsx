@@ -197,7 +197,7 @@ function InvitationContent() {
                 </h3>
               </div>
               <p className="text-2xl md:text-3xl font-bold gradient-text mb-2">
-                10:00 SA
+                10:30 SA
               </p>
               <p className="text-base md:text-lg text-[var(--text-secondary)]">
                 Thứ Tư, ngày 10 tháng 06 năm 2026
@@ -365,6 +365,9 @@ function InvitationContent() {
           </div>
           <p className="text-xs text-[var(--text-muted)]">
             Thiệp mời được tạo bằng ❤️ bởi Nguyễn Duy Hưng
+          </p>
+          <p className="text-xs text-[var(--text-muted)] mt-1">
+            Liên hệ: <a href="tel:0345664024" className="text-[var(--text-primary)] font-medium">0345664024</a>
           </p>
           <p className="text-xs text-[var(--text-muted)] mt-1">
             © 2026 — UIT Graduation

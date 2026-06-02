@@ -172,7 +172,7 @@ export default function WishesWall() {
               href="/wishes"
               className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-[var(--text-primary)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-300/50 hover:bg-white/10 hover:shadow-[0_0_28px_rgba(125,171,255,0.25)]"
             >
-              Xem tất cả lời chúc ✨
+              Xem tất cả lời chúc
             </Link>
           </div>
         </div>

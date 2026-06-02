@@ -185,7 +185,7 @@ export default function RSVPForm({ onSuccess }: RSVPFormProps) {
               Đang gửi...
             </span>
           ) : (
-            "✨ Xác nhận tham gia"
+            "Xác nhận tham gia"
           )}
         </motion.button>
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
+import CallButton from "@/components/CallButton";
 
 /* ============================================
    METADATA - SEO tối ưu cho thiệp mời
@@ -30,6 +31,7 @@ export default function RootLayout({
           {`window.zaloJSV2 = window.zaloJSV2 || {};`}
         </Script>
         {children}
+        <CallButton />
       </body>
     </html>
   );
