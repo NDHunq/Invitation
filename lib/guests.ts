@@ -28,6 +28,7 @@ export const GUEST_MAP: Record<string, string> = {
   "anh-hoang": "Anh Hoàng",
   "anh-nhat": "Anh Nhất",
   "chi-phien": "Chị Phiến",
+  "td5": "Anh em tiểu đội 5",
 };
 
 /** Tên mặc định khi không có query hoặc không khớp */
