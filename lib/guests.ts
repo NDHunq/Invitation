@@ -25,6 +25,7 @@ export const GUEST_MAP: Record<string, string> = {
   "chi-phuong-va-anh-nhut": "Chị Phương và anh Nhựt",
   // ➕ Thêm khách mời mới theo format: key: "Tên hiển thị"
   "anh-duy": "Anh Duy",
+  "anh-truong": "Anh Trường",
   "anh-hoang": "Anh Hoàng",
   "anh-nhat": "Anh Nhất",
   "chi-phien": "Chị Phiến",
